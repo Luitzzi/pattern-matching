@@ -28,7 +28,7 @@ public class Main {
     }
 
     public static void visualiseBoyerMoore() throws Exception{
-        String text = "    T ALGORITHMEN UND DATENSTRUKTUREN";
+        String text = "ALGORITHMEN UND DATENSTRUKTUREN";
         String pattern = "DATEN";
         BoyerMooreSearch textSearcher = new BoyerMooreSearch(text);
         textSearcher.visualiseComparisons(pattern);

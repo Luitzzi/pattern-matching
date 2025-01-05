@@ -2,13 +2,12 @@
  * Pattern searching algorithm.
  * Goes over the whole text and compares at every position in a seperate for loop if all characters of the pattern
  * match with the corresponding letters in the text.
- * <p>
+ *
+ * <ul>
  *  Time complexity:
- *  <ul>
  *  <li>text length = n; pattern length = m; </li>
  *  <li>bc = O(n) ; wc O(n * m) ; ac O(n) </li>
- *  </ul>
- * </p>
+ * </ul>
  */
 public class NaiveSearch implements TextSearcher {
     protected String text;

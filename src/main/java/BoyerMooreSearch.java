@@ -3,14 +3,12 @@
  * Preprocesses the pattern to determine shifts, allowing it to skip sections of the text,
  * enabling sublinear time complexity.
  *
- * <p>
- * Time complexity:
- *  <ul>
- *      <li>text length = n; pattern length = m; alphabet length = ∑;</li>
- *      <li>preparation effort = O(∑ + m)</li>
- *      <li>bc = O(n / m) ; wc = O(n * m) ; ac = O(n / m) </li>
- *  </ul>
- * </p>
+ * <ul>
+ *  Time complexity:
+ *  <li>text length = n; pattern length = m; alphabet length = ∑;</li>
+ *  <li>preparation effort = O(∑ + m)</li>
+ *  <li>bc = O(n / m) ; wc = O(n * m) ; ac = O(n / m) </li>
+ * </ul>
  */
 public class BoyerMooreSearch implements TextSearcher {
     private String text;

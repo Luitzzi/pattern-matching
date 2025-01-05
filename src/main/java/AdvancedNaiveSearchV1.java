@@ -6,13 +6,11 @@ import java.util.Set;
  * Goes in linear time over the text and compares every position with the corresponding letter in the pattern.
  * It keeps track of this letter in the positionInPattern variable.
  *
- * <p>
- * Time complexity:
- *  <ul>
- *      <li>text length = n; pattern length = m; </li>
- *      <li>bc,wc,ac = O(n)</li>
- *  <ul>
- * </p>
+ * <ul>
+ *  Time complexity:
+ *  <li>text length = n; pattern length = m; </li>
+ *  <li>bc,wc,ac = O(n)</li>
+ * <ul>
  */
 public class AdvancedNaiveSearchV1 implements TextSearcher {
     String text;

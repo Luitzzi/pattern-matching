@@ -6,13 +6,11 @@ import java.util.Set;
  * The core function is similar to the NaiveSearch. However, if a comparison fails it doesn't only go one step further,
  * it goes over all matched characters -> counterInText +=  counterInPattern - 1.
  *
- * <p>
- * Time complexity:
- *  <ul>
- *      <li>text length = n; pattern length = m; </li>
- *      <li>bc,wc,ac = O(n)</li>
- *  <ul>
- * </p>
+ * <ul>
+ *  Time complexity:
+ *  <li>text length = n; pattern length = m; </li>
+ *  <li>bc,wc,ac = O(n)</li>
+ * <ul>
  */
 public class AdvancedNaiveSearchV2 implements TextSearcher{
     String text;
