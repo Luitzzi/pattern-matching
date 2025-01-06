@@ -3,7 +3,8 @@ public class Main {
         //visualiseNaive();
         //visualiseAdvancedNaiveV1();
         //visualiseAdvancedNaiveV2();
-        visualiseBoyerMoore();
+        //visualiseBoyerMoore();
+        altklausur();
     }
 
     public static void visualiseNaive() throws Exception{
@@ -30,7 +31,14 @@ public class Main {
     public static void visualiseBoyerMoore() throws Exception{
         String text = "ALGORITHMEN UND DATENSTRUKTUREN";
         String pattern = "DATEN";
-        BoyerMooreSearch textSearcher = new BoyerMooreSearch(text);
+        BoyerMooreSearch textSearcher = new BoyerMooreSearch(text, BoyerMooreSearch.Alphabet.upperCaseLetters);
+        textSearcher.visualiseComparisons(pattern);
+    }
+
+    public static void altklausur() throws Exception{
+        String text = "363645636363645632136";
+        String pattern = "456321";
+        BoyerMooreSearch textSearcher = new BoyerMooreSearch(text, BoyerMooreSearch.Alphabet.onlyNumbers);
         textSearcher.visualiseComparisons(pattern);
     }
 }

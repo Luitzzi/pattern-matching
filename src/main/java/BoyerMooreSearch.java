@@ -1,25 +1,46 @@
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Pattern searching algorithm implementing the bad character heuristic. <br>
  * Preprocesses the pattern to determine shifts, allowing it to skip sections of the text,
  * enabling sublinear time complexity.
+ * <ul>
+ *  Possible alphabets:
+ *  <li>Only numbers</li>
+ *  <li>Upper case letters</li>
+ *  <li>Lover case letters</li>
+ *  <li>All letters</li>
+ *  <li>Numbers and all letters</li>
+ *  The special characters ' ' and ',' are always at the second to last and last position.
+ * </ul>
  *
  * <ul>
  *  Time complexity:
  *  <li>text length = n; pattern length = m; alphabet length = ∑;</li>
+ *  <li>To validate the text = O(n)</li>
+ *  Method occurrences:
  *  <li>preparation effort = O(∑ + m)</li>
  *  <li>bc = O(n / m) ; wc = O(n * m) ; ac = O(n / m) </li>
  * </ul>
  */
 public class BoyerMooreSearch implements TextSearcher {
+    @NotNull
     private String text;
-    int sizeOfAlphabet;
-    private int[] shiftAlphabet;
+    private Alphabet alphabetType;
+    private int sizeOfAlphabet;
+    private int[] shiftTable;
 
-    public BoyerMooreSearch(String text) {
-        // Default Alphabet used -> All upper case characters, space and comma
-        this.text = text;
-        sizeOfAlphabet = 28;
-        shiftAlphabet = new int[sizeOfAlphabet];
+    public enum Alphabet {onlyNumbers, upperCaseLetters, lowerCaseLetters, allLetters, numbersAndAllLetters}
+
+    /**
+     * The alphabets containing the letters also include the space at position 26 and comma at position 27.
+     * @param text
+     * @param alphabetType
+     */
+    public BoyerMooreSearch(String text, Alphabet alphabetType) {
+        setText(text, alphabetType);
+        calcSizeOfAlphabet();
+        initShiftTable();
     }
 
     @Override
@@ -45,13 +66,13 @@ public class BoyerMooreSearch implements TextSearcher {
             }
             else {
                 // Jump to next position
-                if (pattern.length() - counterInPattern > shiftAlphabet[getIndex(text.charAt(counterInText))]) {
+                if (pattern.length() - counterInPattern > shiftTable[getIndex(text.charAt(counterInText))]) {
                     /* Went more steps left (down the text) then the jump distance from shiftAlphabet would be.
                        -> Jump all steps back and one step further */
                     counterInText += pattern.length() - counterInPattern;
                 }
                 else {
-                    counterInText += shiftAlphabet[getIndex(text.charAt(counterInText))];
+                    counterInText += shiftTable[getIndex(text.charAt(counterInText))];
                 }
                 // Reset counterInPattern
                 counterInPattern = pattern.length() - 1;
@@ -59,6 +80,190 @@ public class BoyerMooreSearch implements TextSearcher {
         }
 
         return occurrences;
+    }
+
+    public void visualiseComparisons(String pattern) throws InterruptedException {
+        initShiftAlphabet(pattern);
+
+        String textInShiftNums = calcTextInShiftNums();
+        System.out.println(textInShiftNums);
+        System.out.println(text);
+        String cursor = "^";
+        String output;
+        boolean first = true;
+
+        int occurrences = 0;
+        int counterInText = pattern.length() - 1;
+        int counterInPattern = pattern.length() - 1;
+
+        int prevTextPos = counterInText;
+        int lastJumpLength;
+
+        while (counterInText < text.length()) {
+            char currentCharInPattern = pattern.charAt(counterInPattern);
+            output = calcNumSpaces(String.valueOf(currentCharInPattern),counterInText);
+            lastJumpLength = counterInText - prevTextPos;
+            prevTextPos = counterInText;
+            System.out.print("\r" + output + " jumpsize: " + lastJumpLength + " occurrences: " + occurrences);
+            Thread.sleep(2500);
+
+            char c = text.charAt(counterInText);
+            if (text.charAt(counterInText) == pattern.charAt(counterInPattern)) {
+                // Match
+                if (counterInPattern == 0) {
+                    occurrences++;
+                    counterInText += pattern.length();
+                    counterInPattern = pattern.length() - 1;
+                }
+                else {
+                    counterInText--;
+                    counterInPattern--;
+                }
+            }
+            else {
+                // Jump to next position
+                if (pattern.length() - counterInPattern > shiftTable[getIndex(text.charAt(counterInText))]) {
+                    /* Went more steps left (down the text) then the jump distance from shiftAlphabet would be.
+                       -> Jump all steps back and one step further */
+                    counterInText += pattern.length() - counterInPattern;
+                }
+                else {
+                    counterInText += shiftTable[getIndex(text.charAt(counterInText))];
+                }
+                // Reset counterInPattern
+                counterInPattern = pattern.length() - 1;
+            }
+        }
+
+    }
+
+    public @NotNull String getText() {
+        return text;
+    }
+
+    public void setText(String text, Alphabet alphabetType) {
+        setAlphabetType(alphabetType);
+        if (isTextValid(text)) {
+            this.text = text;
+        }
+        else throw new IllegalArgumentException("The text consists of characters that are not included in the alphabet!");
+    }
+
+    public Alphabet getAlphabetType() {
+        return alphabetType;
+    }
+
+    public void setAlphabetType(Alphabet alphabetType) {
+        if (alphabetType != null) {
+            this.alphabetType = alphabetType;
+        }
+        else throw new IllegalArgumentException("An alphabet needs to be chosen. Null is not valid.");
+    }
+
+    public int getSizeOfAlphabet() {
+        return sizeOfAlphabet;
+    }
+
+    public void calcSizeOfAlphabet() {
+        switch (alphabetType) {
+            case onlyNumbers -> sizeOfAlphabet = 10 + 2;
+            case upperCaseLetters -> sizeOfAlphabet = 28;
+            case allLetters -> sizeOfAlphabet = 2 * 26 + 2;
+            case numbersAndAllLetters -> sizeOfAlphabet = 10 + 2 * 26 + 2;
+            default -> throw new IllegalArgumentException("Alphabet type is missing.");
+        }
+    }
+
+    public int[] getShiftTable() {
+        return shiftTable;
+    }
+
+    public void initShiftTable() {
+        shiftTable = new int[sizeOfAlphabet];
+    }
+
+    private boolean isTextValid(String text) {
+        for (int i = 0; i < text.length(); i++) {
+            if (!isCharValid(text.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isCharValid(char c) {
+        if (c == ' ' || c == ',') {
+            return true;
+        }
+        else {
+            switch (alphabetType) {
+                case onlyNumbers -> {
+                    return checkForOnlyNumbers(c);
+                }
+                case upperCaseLetters -> {
+                    return checkForUpperCaseLetters(c);
+                }
+                case lowerCaseLetters -> {
+                    return checkForLowerCaseLetters(c);
+                }
+                case allLetters -> {
+                    return checkForAllLetters(c);
+                }
+                case numbersAndAllLetters -> {
+                    return checkForNumbersAndAllLetters(c);
+                }
+                default -> {
+                    return false;
+                }
+            }
+        }
+    }
+
+    private boolean checkForOnlyNumbers(char c) {
+        return c >= '0' && c <= '9';
+    }
+
+    private boolean checkForUpperCaseLetters(char c) {
+        return c >= 'A' && c <= 'Z';
+    }
+
+    private boolean checkForLowerCaseLetters(char c) {
+        return c >= 'a' && c <= 'z';
+    }
+
+    private boolean checkForAllLetters(char c) {
+        return checkForUpperCaseLetters(c) || checkForLowerCaseLetters(c);
+    }
+
+    private boolean checkForNumbersAndAllLetters(char c) {
+        return checkForOnlyNumbers(c) || checkForUpperCaseLetters(c) || checkForLowerCaseLetters(c);
+    }
+
+    /**
+     * Maps the ASCII value of a char to the position in the alphabet.
+     * Special cases ' ' and ',' are always on the second to last and last position in alphabet.
+     * @param charInPattern character from the text
+     * @return index in the alphabet
+     */
+    private int getIndex(char charInPattern) {
+        if (charInPattern == ' ') {
+            return sizeOfAlphabet - 2;
+        }
+        else if (charInPattern == ',') {
+            return sizeOfAlphabet - 1;
+        }
+        else {
+            if (charInPattern >= '0' && charInPattern <= '9') {
+                // Number
+                return charInPattern - '0';
+            } else if (charInPattern >= 'A' && charInPattern <= 'Z') {
+                // Upper case
+                return charInPattern - 'A';
+            } else {
+                // Lower case
+                return charInPattern - 'a';
+            }
+        }
     }
 
     /**
@@ -78,95 +283,39 @@ public class BoyerMooreSearch implements TextSearcher {
         int patternLength = pattern.length();
         // Assign all chars of the alphabet the default shift width of the patternLength
         for (int i = 0; i < sizeOfAlphabet; i++) {
-            shiftAlphabet[i] = patternLength;
+            shiftTable[i] = patternLength;
         }
         // Edit the shiftAlphabet array for all chars occurring in the pattern
         for (int i = 0; i < patternLength; i++) {
-            shiftAlphabet[getIndex(pattern.charAt(i))] = patternLength - i - 1;
+            shiftTable[getIndex(pattern.charAt(i))] = patternLength - i - 1;
         }
     }
 
     /**
-     * Maps the ASCII value of a char to the position in the alphabet.
-     * @param charInPattern
-     * @return index in the alphabet
+     * Method used for the visualisation.
+     * Concatenate so many spaces as the counterInText has advanced with the current char in the pattern
+     * @param currentCharInPattern current char in the pattern that is compared with the text
+     * @param positionInText
+     * @return String consisting of positionInText many spaces and the char that is currently compared to the text
      */
-    private int getIndex(char charInPattern) {
-        return switch (charInPattern) {
-            case ' ' -> 26;
-            case ',' -> 27;
-            default -> (int) charInPattern - 65;
-        };
-    }
-
-    public int visualiseComparisons(String pattern) throws InterruptedException {
-        initShiftAlphabet(pattern);
-
-        String textInShiftNums = calcTextInShiftNums();
-        System.out.println(textInShiftNums);
-        System.out.println(text);
-        String cursor = "^";
-        String output;
-        boolean first = true;
-
-        int occurrences = 0;
-        int counterInText = pattern.length() - 1;
-        int counterInPattern = pattern.length() - 1;
-
-        int prevTextPos = counterInText;
-        int lastJumpLength;
-
-        while (counterInText < text.length()) {
-            char currentPatternChar = pattern.charAt(counterInPattern);
-            output = calcNumSpaces(String.valueOf(currentPatternChar),counterInText);
-            lastJumpLength = counterInText - prevTextPos;
-            prevTextPos = counterInText;
-            System.out.print("\r" + output + " jumpsize: " + lastJumpLength);
-            Thread.sleep(2500);
-
-            char c = text.charAt(counterInText);
-            if (text.charAt(counterInText) == pattern.charAt(counterInPattern)) {
-                // Match
-                if (counterInPattern == 0) {
-                    occurrences++;
-                    counterInText += pattern.length();
-                    counterInPattern = pattern.length() - 1;
-                }
-                else {
-                    counterInText--;
-                    counterInPattern--;
-                }
-            }
-            else {
-                // Jump to next position
-                if (pattern.length() - counterInPattern > shiftAlphabet[getIndex(text.charAt(counterInText))]) {
-                    /* Went more steps left (down the text) then the jump distance from shiftAlphabet would be.
-                       -> Jump all steps back and one step further */
-                    counterInText += pattern.length() - counterInPattern;
-                }
-                else {
-                    counterInText += shiftAlphabet[getIndex(text.charAt(counterInText))];
-                }
-                // Reset counterInPattern
-                counterInPattern = pattern.length() - 1;
-            }
-        }
-
-        return occurrences;
-    }
-
-    private String calcNumSpaces(String output, int positionInText) {
+    private String calcNumSpaces(String currentCharInPattern, int positionInText) {
         String space = " ";
         for (int i = 0; i < positionInText; i++) {
-            output = space + output;
+            currentCharInPattern = space + currentCharInPattern;
         }
-        return output;
+        return currentCharInPattern;
     }
 
+    /**
+     * Method used for the visualisation.
+     * Calculate for each char in the text the corresponding shift size from the shift table.
+     * Is printed above the text to visualise the shifts.
+     * @return the text but instead of the chars with the shift sizes
+     */
     private String calcTextInShiftNums() {
         int[] shiftNums = new int[text.length()];
         for (int i = 0; i < text.length(); i++) {
-            shiftNums[i] = shiftAlphabet[getIndex(text.charAt(i))];
+            shiftNums[i] = shiftTable[getIndex(text.charAt(i))];
         }
 
         StringBuilder textInShiftNums = new StringBuilder();

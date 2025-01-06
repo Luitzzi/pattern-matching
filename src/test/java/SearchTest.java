@@ -14,7 +14,7 @@ class SearchTest {
             case naive -> textSorter = new NaiveSearch(text);
             case advancedNaiveV1 -> textSorter = new AdvancedNaiveSearchV1(text);
             case advancedNaiveV2 -> textSorter = new AdvancedNaiveSearchV2(text);
-            case boyerMoore -> textSorter = new BoyerMooreSearch(text);
+            case boyerMoore -> textSorter = new BoyerMooreSearch(text, BoyerMooreSearch.Alphabet.upperCaseLetters);
         }
     }
 
