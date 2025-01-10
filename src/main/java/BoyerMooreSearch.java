@@ -11,7 +11,8 @@ import org.jetbrains.annotations.NotNull;
  *  <li>Lover case letters</li>
  *  <li>All letters</li>
  *  <li>Numbers and all letters</li>
- *  The special characters ' ' and ',' are always at the second to last and last position.
+ *  <li>Ascii</li>
+ *  The special characters ' ' and ',' are always at the second to last and last position except in the ascii alphabet.
  * </ul>
  *
  * <ul>
@@ -30,7 +31,7 @@ public class BoyerMooreSearch implements TextSearcher {
     private int sizeOfAlphabet;
     private int[] shiftTable;
 
-    public enum Alphabet {onlyNumbers, upperCaseLetters, lowerCaseLetters, allLetters, numbersAndAllLetters}
+    public enum Alphabet {onlyNumbers, upperCaseLetters, lowerCaseLetters, allLetters, numbersAndAllLetters, ascii}
 
     /**
      * The alphabets containing the letters also include the space at position 26 and comma at position 27.
@@ -167,9 +168,11 @@ public class BoyerMooreSearch implements TextSearcher {
     public void calcSizeOfAlphabet() {
         switch (alphabetType) {
             case onlyNumbers -> sizeOfAlphabet = 10 + 2;
-            case upperCaseLetters -> sizeOfAlphabet = 28;
+            case lowerCaseLetters -> sizeOfAlphabet = 26 + 2;
+            case upperCaseLetters -> sizeOfAlphabet = 26 + 2;
             case allLetters -> sizeOfAlphabet = 2 * 26 + 2;
             case numbersAndAllLetters -> sizeOfAlphabet = 10 + 2 * 26 + 2;
+            case ascii -> sizeOfAlphabet = 128;
             default -> throw new IllegalArgumentException("Alphabet type is missing.");
         }
     }
@@ -182,7 +185,7 @@ public class BoyerMooreSearch implements TextSearcher {
         shiftTable = new int[sizeOfAlphabet];
     }
 
-    private boolean isTextValid(String text) {
+    public boolean isTextValid(String text) {
         for (int i = 0; i < text.length(); i++) {
             if (!isCharValid(text.charAt(i))) {
                 return false;
@@ -212,6 +215,9 @@ public class BoyerMooreSearch implements TextSearcher {
                 case numbersAndAllLetters -> {
                     return checkForNumbersAndAllLetters(c);
                 }
+                case ascii -> {
+                    return checkForAscii(c);
+                }
                 default -> {
                     return false;
                 }
@@ -239,14 +245,23 @@ public class BoyerMooreSearch implements TextSearcher {
         return checkForOnlyNumbers(c) || checkForUpperCaseLetters(c) || checkForLowerCaseLetters(c);
     }
 
+    private boolean checkForAscii(char c) {
+        return c >= 0 && c <= 127;
+    }
+
     /**
      * Maps the ASCII value of a char to the position in the alphabet.
      * Special cases ' ' and ',' are always on the second to last and last position in alphabet.
+     * General order is: numbers ; upperCase ; lowerCase ; specialChars
+     * (Of course only one alphabet would be the most effective solution)
      * @param charInPattern character from the text
      * @return index in the alphabet
      */
-    private int getIndex(char charInPattern) {
-        if (charInPattern == ' ') {
+    public int getIndex(char charInPattern) {
+        if (alphabetType == Alphabet.ascii) {
+            return charInPattern;
+        }
+        else if (charInPattern == ' ') {
             return sizeOfAlphabet - 2;
         }
         else if (charInPattern == ',') {
@@ -258,10 +273,23 @@ public class BoyerMooreSearch implements TextSearcher {
                 return charInPattern - '0';
             } else if (charInPattern >= 'A' && charInPattern <= 'Z') {
                 // Upper case
-                return charInPattern - 'A';
+                if (alphabetType == Alphabet.numbersAndAllLetters) {
+                    return charInPattern - 'A' + 10;
+                }
+                else {
+                    return charInPattern - 'A';
+                }
             } else {
                 // Lower case
-                return charInPattern - 'a';
+                if (alphabetType == Alphabet.allLetters) {
+                    return charInPattern - 'a' + 26;
+                }
+                else if (alphabetType == Alphabet.numbersAndAllLetters) {
+                    return charInPattern - 'a' + 10 + 26;
+                }
+                else {
+                    return charInPattern - 'a';
+                }
             }
         }
     }

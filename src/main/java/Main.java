@@ -4,7 +4,8 @@ public class Main {
         //visualiseAdvancedNaiveV1();
         //visualiseAdvancedNaiveV2();
         //visualiseBoyerMoore();
-        altklausur();
+        //altklausur();
+        altklausur2019SS();
     }
 
     public static void visualiseNaive() throws Exception{
@@ -38,6 +39,13 @@ public class Main {
     public static void altklausur() throws Exception{
         String text = "363645636363645632136";
         String pattern = "456321";
+        BoyerMooreSearch textSearcher = new BoyerMooreSearch(text, BoyerMooreSearch.Alphabet.onlyNumbers);
+        textSearcher.visualiseComparisons(pattern);
+    }
+
+    public static void altklausur2019SS() throws Exception{
+        String text = "363645636363645632136";
+        String pattern = "3636";
         BoyerMooreSearch textSearcher = new BoyerMooreSearch(text, BoyerMooreSearch.Alphabet.onlyNumbers);
         textSearcher.visualiseComparisons(pattern);
     }
