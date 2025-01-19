@@ -42,6 +42,8 @@ public class AdvancedNaiveSearchV2 implements TextSearcher{
                 }
                 if (match) {
                     occurrences++;
+                    // Jump over matched letters
+                    counterInText += pattern.length() - 1;
                 }
             }
             return occurrences;
@@ -74,6 +76,10 @@ public class AdvancedNaiveSearchV2 implements TextSearcher{
             }
             if (match) {
                 occurrences++;
+                counterInText += pattern.length() - 1;
+                for (int i = 0; i < pattern.length() - 1; i++) {
+                    output = space + output;
+                }
             }
 
             output = space + output;

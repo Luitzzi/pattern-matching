@@ -2,10 +2,10 @@ public class Main {
     public static void main(String[] args) throws Exception{
         //visualiseNaive();
         //visualiseAdvancedNaiveV1();
-        //visualiseAdvancedNaiveV2();
+        visualiseAdvancedNaiveV2();
         //visualiseBoyerMoore();
         //altklausur();
-        altklausur2019SS();
+        //altklausur2019SS();
     }
 
     public static void visualiseNaive() throws Exception{
