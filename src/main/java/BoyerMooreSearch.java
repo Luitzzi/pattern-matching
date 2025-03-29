@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  *  Possible alphabets:
  *  <li>Only numbers</li>
  *  <li>Upper case letters</li>
- *  <li>Lover case letters</li>
+ *  <li>Lower case letters</li>
  *  <li>All letters</li>
  *  <li>Numbers and all letters</li>
  *  <li>Ascii</li>
@@ -106,7 +106,7 @@ public class BoyerMooreSearch implements TextSearcher {
             lastJumpLength = counterInText - prevTextPos;
             prevTextPos = counterInText;
             System.out.print("\r" + output + " jumpsize: " + lastJumpLength + " occurrences: " + occurrences);
-            Thread.sleep(2500);
+            Thread.sleep(10000);
 
             char c = text.charAt(counterInText);
             if (text.charAt(counterInText) == pattern.charAt(counterInPattern)) {

@@ -1,6 +1,8 @@
+import java.util.Scanner;
+
 /**
  * Pattern searching algorithm.
- * Goes over the whole text and compares at every position in a seperate for loop if all characters of the pattern
+ * Goes over the whole text and compares at every position in a separate for loop if all characters of the pattern
  * match with the corresponding letters in the text.
  *
  * <ul>
@@ -44,7 +46,7 @@ public class NaiveSearch implements TextSearcher {
             boolean match = true;
             for (int counterInPattern = 0; counterInPattern < pattern.length(); counterInPattern++) {
                 System.out.print("\r" + output + " comparisons: " + (counterInPattern + 1) + "; occurences: " + occurences);
-                Thread.sleep(500);
+                Thread.sleep(10000);
 
                 if (text.charAt(counterInText + counterInPattern) != pattern.charAt(counterInPattern)) {
                     match = false;

@@ -57,13 +57,13 @@ public class AdvancedNaiveSearchV1 implements TextSearcher {
 
         for (int counterInText = 0; counterInText < text.length(); counterInText++) {
             System.out.print("\r" + output + " compared with " + pattern.charAt(positionInPattern) + "; occurences: " + occurences);
-            Thread.sleep(1000);
+            Thread.sleep(10000);
 
             if (text.charAt(counterInText) != pattern.charAt(positionInPattern)) {
                 // No Match
                 positionInPattern = 0;
                 System.out.print("\r" + output + " compared with " + pattern.charAt(positionInPattern) + "; occurences: " + occurences);
-                Thread.sleep(1000);
+                Thread.sleep(10000);
             }
             if (text.charAt(counterInText) == pattern.charAt(positionInPattern)) {
                 // Match

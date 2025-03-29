@@ -62,7 +62,7 @@ public class AdvancedNaiveSearchV2 implements TextSearcher{
 
             for (int counterInPattern = 0; counterInPattern < pattern.length(); counterInPattern++) {
                 System.out.print("\r" + output + " comparisons: " + counterInPattern + "; occurrences: " + occurrences);
-                Thread.sleep(500);
+                Thread.sleep(10000);
                 if (text.charAt(counterInText + counterInPattern) != pattern.charAt(counterInPattern)) {
                     match = false;
                     if (counterInPattern > 0) {
