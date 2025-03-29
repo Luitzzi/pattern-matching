@@ -26,16 +26,36 @@ text length = n; pattern length = m;
 
 ## Visualisation
 * **Naive Search** <br/>
-![Naive Search visualised](/images/naive_search.gif)<br/><br/>
+![Naive Search visualised](/images/naive_search.gif)<br/>
+Pattern = "DATEN"; Text = "ALGORITHMEN UND DATENSTRUKTUREN"<br/>
+Variables: 
+  * comparisons -> Displays the number of comparisons the inner for-loop performed.<br/>
+  * occurences -> How often the pattern occurs in the text.<br/><br/>
 
 * **Advanced Naive Search V1**<br/>
-![Advanced Naive Search V1 visualised](/images/advanced_naive_search_v1.gif)<br/><br/>
+![Advanced Naive Search V1 visualised](/images/advanced_naive_search_v1.gif)<br/>
+Pattern = "DATEN"; Text = "DATEN DATES"<br/>
+Only one pointer goes over the text and keeps track of the letter from the pattern that needs to be compared to the text.<br/>
+Variables:
+    * compared with \<letter\> -> Letter from the pattern that is compared.<br/>
+    * occurences -> How often the pattern occurs in the text.<br/><br/>
 
 * **Advanced Naive Search V2**<br/>
 ![Advanced Naive Search V2 visualised](/images/advanced_naive_search_v2.gif)<br/><br/>
+Pattern = "DATEN"; Text = "DATEN DATABCDE"<br/>
+The text-pointer jumps after comparing DATEN over all previously compared letters. Same with DAT later.
+Variables:
+    * comparisons -> Displays the number of comparisons the inner for-loop performed.<br/>
+    * occurences -> How often the pattern occurs in the text.<br/><br/>
 
 * **Boyer Moore**<br/>
 ![Boyer Moore visualised](/images/boyer_moore.gif)<br/><br/>
+Pattern = "DATEN"; Text = "ALGORITHMEN UND DATENSTRUKTUREN"<br/>
+The numbers above the text display the jumpsize of the corresponding letter.
+Variables:
+    * \<letter\> -> The letter from the pattern that is currently compared to the text.
+    * jumpsize -> Displays the size of the previous jump. It is similar to the jumpsize number above the last compared letter.<br/>
+    * occurences -> How often the pattern occurs in the text.<br/><br/>
 
 
 ![Static Badge](https://img.shields.io/badge/Author-Luis_Gerlinger-blue)
